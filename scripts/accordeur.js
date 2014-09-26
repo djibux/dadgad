@@ -5,6 +5,8 @@ navigator.getUserMedia = (
 	navigator.msGetUserMedia
 );
 
+var tuning = new Tuning();
+
 if (navigator.getUserMedia) {
 	navigator.getUserMedia (
 		{
@@ -15,6 +17,7 @@ if (navigator.getUserMedia) {
 		function(localMediaStream) {
 			var canvas = document.getElementById('fft');
 			var txt = document.getElementById('freq');
+			var note = document.getElementById('note');
 			var fft;
 
 			var canvasCtx = canvas.getContext('2d');
@@ -78,7 +81,11 @@ if (navigator.getUserMedia) {
 			function draw() {
 				drawVisual = requestAnimationFrame(draw);
 				analyser.getFloatFrequencyData(dataArray);
-				txt.innerHTML = (max_index(dataArray)*audioCtx.sampleRate/(analyser.fftSize*sousEch))+" Hz";
+				var frequency = (max_index(dataArray)*audioCtx.sampleRate/(analyser.fftSize*sousEch));
+				console.log(frequency);
+				txt.innerHTML = frequency+" Hz";
+				note.innerHTML = tuning.findClosestNote(frequency);
+
 				canvasCtx.fillStyle = 'rgb(0, 0, 0)';
 				canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
 
