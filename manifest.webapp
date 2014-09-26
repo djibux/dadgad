@@ -1,0 +1,19 @@
+{
+  "name": "DADGAD",
+  "description": "Simple tuner for Firefox OS",
+  "launch_path": "/index.html",
+  "icons": {
+    "60": "/images/icon-60.png",
+    "128": "/images/icon-128.png",
+    "512": "/images/icon-512.png"
+  },
+  "developer": {
+    "name": "Olivier Marceau and djib",
+    "url": "null"
+  },
+  "permissions": {
+    "audio-capture": {
+      "description": "We need to access your microphone for the tuner to work!"
+    }
+  }
+}
