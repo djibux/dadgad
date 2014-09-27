@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>DAGDAD : simple tuner for Firefox OS</title>
-  </head>
-  <body>
-    <div><canvas id="fft" width="200" height="200"></canvas></div>
-    <p id="freq"></p>
-    <p id="note"></p>
-    <script src="scripts/tunings.js"></script>
-    <script src="scripts/accordeur.js"></script>
-  </body>
+	<head>
+		<title>DAGDAD : simple tuner for Firefox OS</title>
+		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="style/style.css">
+	</head>
+	<body>
+		<div id="tuner">
+			<p id="low-note-indicator">&lt;&lt;&lt;</p>
+			<p id="closest-note"></p>
+			<p id="high-note-indicator">&gt;&gt;&gt;</p>
+		</div>
+		<p>
+			Detected frequency: <span id="detected-frequency"></span>
+			<br />
+			Gap to closest note: <span id="gap"></span>
+		</p>
+		<script src="scripts/notes.js"></script>
+		<script src="scripts/tunings.js"></script>
+		<script src="scripts/accordeur.js"></script>
+	</body>
 </html>

@@ -7,6 +7,8 @@ navigator.getUserMedia = (
 
 var tuning = new Tuning();
 
+/* TODO : needs refactoring! */
+
 if (navigator.getUserMedia) {
 	navigator.getUserMedia (
 		{
@@ -15,12 +17,6 @@ if (navigator.getUserMedia) {
 		},
 		// successCallback
 		function(localMediaStream) {
-			var canvas = document.getElementById('fft');
-			var txt = document.getElementById('freq');
-			var note = document.getElementById('note');
-			var fft;
-
-			var canvasCtx = canvas.getContext('2d');
 			var magnitude;
 			var bufferSize = 4096;
 			var rate;
@@ -39,7 +35,6 @@ if (navigator.getUserMedia) {
 
 			// create a ScriptProcessorNode
 
-			console.log("node");
 			// Give the node a function to process audio events
 			node.onaudioprocess = function(audioProcessingEvent) {
 				// The input buffer is the song we loaded earlier
@@ -70,34 +65,32 @@ if (navigator.getUserMedia) {
 			analyser.fftSize = 2048;
 			analyser.smoothingTimeConstant = 0.9;
 			var bufferLength = analyser.frequencyBinCount;
-			//console.log(bufferLength);
 			var dataArray = new Float32Array(bufferLength);
 
-			//Dessins
-			WIDTH = canvas.width;
-			HEIGHT = canvas.height;
-			canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+			var detectedFrequencyTxt = document.getElementById('detected-frequency');
+			var gapTxt = document.getElementById('gap');
+			var closestNoteTxt = document.getElementById('closest-note');
+			var lowNoteIndicatorTxt = document.getElementById('low-note-indicator');
+			var highNoteIndicatorTxt = document.getElementById('high-note-indicator');
 
 			function draw() {
 				drawVisual = requestAnimationFrame(draw);
 				analyser.getFloatFrequencyData(dataArray);
 				var frequency = (max_index(dataArray)*audioCtx.sampleRate/(analyser.fftSize*sousEch));
-				console.log(frequency);
-				txt.innerHTML = frequency+" Hz";
-				note.innerHTML = tuning.findClosestNote(frequency);
+				var closestNote = tuning.findClosestNote(frequency);
 
-				canvasCtx.fillStyle = 'rgb(0, 0, 0)';
-				canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
-				var barWidth = (WIDTH / bufferLength) * 2.5;
-				var barHeight;
-				var x = 0;
-
-				for(var i = 0; i < bufferLength; i++) {
-					barHeight = (dataArray[i] + 140)*2;
-					canvasCtx.fillStyle = 'rgb(' + Math.floor(barHeight+100) + ',50,50)';
-					canvasCtx.fillRect(x,HEIGHT-barHeight/2,barWidth,barHeight/2);
-					x += barWidth + 1;
+				detectedFrequencyTxt.innerHTML = frequency.toFixed(2)+" Hz";
+				gapTxt.innerHTML = closestNote.frequencyGap.toFixed(2)+ "Hz";
+				closestNoteTxt.innerHTML = closestNote.note;
+				if ( Math.abs(closestNote.frequencyGap) < frequency/100 ) {
+					lowNoteIndicatorTxt.innerHTML = ">";
+					highNoteIndicatorTxt.innerHTML = "<";
+				} else if ( closestNote.frequencyGap > 0 ) {
+					lowNoteIndicatorTxt.innerHTML = ">";
+					highNoteIndicatorTxt.innerHTML = "";
+				} else {
+					lowNoteIndicatorTxt.innerHTML = "";
+					highNoteIndicatorTxt.innerHTML = "<";
 				}
 			};
 			draw();
