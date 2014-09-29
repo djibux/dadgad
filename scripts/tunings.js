@@ -1,5 +1,5 @@
 var availableTunings = {
-	"standard" : [ "E2", "E3", "A2", "A3", "D3", "G3", "B3", "E4" ]
+	"standard" : [ "E2", "A2", "D3", "G3", "B3", "E4" ]
 };
 
 function Tuning( chosenTuning ) {
