@@ -8,8 +8,6 @@ function Tuning( chosenTuning ) {
 }
 
 Tuning.prototype.findClosestNote = function(detectedFrequency) {
-	var closestLowerNote;
-	var closestHigherNote;
 	var closestNote;
 	var frequencyGap;
 	var logFrequencyGap = Infinity;
