@@ -12,6 +12,6 @@ function Notes() {
 	}
 }
 
-Notes.prototype.noteToFrequency = function(note) {
+Notes.prototype.toFrequency = function(note) {
 	return this.frequencies[note];
 }
