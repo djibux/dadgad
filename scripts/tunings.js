@@ -10,22 +10,17 @@ function Tuning( chosenTuning ) {
 
 Tuning.prototype.findClosestNote = function(detectedFrequency) {
 	var closestNote;
-	var frequencyGap;
-	var logFrequencyGap = Infinity;
-	var logDiffFreq;
-	var harmonicNumber;
+	var frequencyGap = Infinity;
+	var diffFreq;
 	this.chosenTuning.forEach( function(tuningReference) {
 		for(var i=0;i<frequencyMultiple.length;i++){
-			logDiffFreq = Math.log(Math.abs(frequencyMultiple[i]*this.notes.noteToFrequency(tuningReference)-detectedFrequency));
-			if ( logDiffFreq<= logFrequencyGap) {
-				logFrequencyGap =  logDiffFreq;
+			diffFreq = Math.abs(frequencyMultiple[i]*this.notes.noteToFrequency(tuningReference)-detectedFrequency);
+			if ( diffFreq<= frequencyGap) {
+				frequencyGap =  diffFreq;
 				closestNote = tuningReference;
-				harmonicNumber = i;
 			}
 		}
 	}, this);
 
-
-	frequencyGap = frequencyMultiple[harmonicNumber]*this.notes.noteToFrequency(closestNote) - detectedFrequency;
 	return { "note": closestNote, "frequencyGap": frequencyGap };
 }
