@@ -5,8 +5,6 @@ navigator.getUserMedia = (
 	navigator.msGetUserMedia
 );
 
-var tuning = new Tuning("chromatic");
-
 /* TODO : needs refactoring! */
 
 if (navigator.getUserMedia) {

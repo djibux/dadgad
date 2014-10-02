@@ -21,7 +21,6 @@ body {
 	display: table;
 	margin: auto;
 	width: auto;
-	margin-top: 20%;
 }
 	#tuner>p {
 		font-size: 20vw;
@@ -36,3 +35,7 @@ body {
 	#tuner>p+p+p {
 		text-align: left;
 	}
+
+button {
+	font-size: 5vw;
+}
