@@ -1,17 +1,20 @@
-function Notes() {
-	// Frequencies found here
-	// http://forum.cakewalk.com/Guitar-notes-and-frequencies-chart-included-m869331.aspx
-	// http://www.vaughns-1-pagers.com/music/musical-note-frequencies.htm
-	this.frequencies = {
-		"E2":  82.407,
-		"A2": 110.00 ,
-		"D3": 146.83 ,
-		"G3": 196.00 ,
-		"B3": 246.94 ,
-		"E4": 329.63
-	}
+Note = function(note) {
+	this.noteName = note;
 }
 
-Notes.prototype.toFrequency = function(note) {
-	return this.frequencies[note];
+Object.defineProperty(Note, "AVAILABLE_NOTES", { value: [ "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#" ] })
+
+Note.prototype.toFrequency = function() {
+	// A4 is 440Hz, A1 is (440/2**3)Hz, every semitone is sqtr12(2) apart
+	return 440/8 * Math.pow(2,Note.AVAILABLE_NOTES.indexOf(this.noteName)/12);
+}
+
+Note.prototype.processFrequencyGap = function( frequency ) {
+	var previousGap = Infinity;
+	var currentGap = Infinity;
+	for ( var octave = 0; Math.abs(currentGap) <= Math.abs(previousGap); octave++ ) {
+		previousGap = currentGap;
+		currentGap = this.toFrequency() * Math.pow(2,octave) - frequency;
+	}
+	return previousGap;
 }

@@ -5,7 +5,7 @@ navigator.getUserMedia = (
 	navigator.msGetUserMedia
 );
 
-var tuning = new Tuning();
+var tuning = new Tuning("chromatic");
 
 /* TODO : needs refactoring! */
 
@@ -79,9 +79,9 @@ if (navigator.getUserMedia) {
 				var frequency = (max_index(dataArray)*audioCtx.sampleRate/(analyser.fftSize*sousEch));
 				var closestNote = tuning.findClosestNote(frequency);
 
-				detectedFrequencyTxt.innerHTML = frequency.toFixed(2)+" Hz";
+				detectedFrequencyTxt.innerHTML = frequency.toFixed(1)+" Hz";
 				gapTxt.innerHTML = closestNote.frequencyGap.toFixed(2)+ "Hz";
-				closestNoteTxt.innerHTML = closestNote.note;
+				closestNoteTxt.innerHTML = closestNote.note.noteName;
 				if ( Math.abs(closestNote.frequencyGap) < frequency/100 ) {
 					lowNoteIndicatorTxt.innerHTML = ">";
 					highNoteIndicatorTxt.innerHTML = "<";
