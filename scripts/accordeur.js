@@ -18,7 +18,7 @@ if (navigator.getUserMedia) {
 			var magnitude;
 			var bufferSize = 4096;
 			var rate;
-			var sousEch = 64;
+			var resamplingRate = 64;
 
 			var audioCtx = new AudioContext();
 			var source = audioCtx.createMediaStreamSource(localMediaStream);
@@ -27,7 +27,7 @@ if (navigator.getUserMedia) {
 
 			window.horrible_hack_for_mozilla = source;
 
-			// Connection des nodes : microphone -> ScriptProcessorNode (sous échantillonnage) -> AnalyserNode (fft)
+			// Connection des nodes : microphone -> ScriptProcessorNode (resampling) -> AnalyserNode (fft)
 			source.connect(node);
 			node.connect(analyser);
 
@@ -48,11 +48,11 @@ if (navigator.getUserMedia) {
 
 					// Loop through the 4096 samples
 
-					for (var sample = 0; sample < inputBuffer.length/sousEch; sample++) {
+					for (var sample = 0; sample < inputBuffer.length/resamplingRate; sample++) {
 						// make output equal to the mean of the input
 						outputData[sample] = 0;
-						for(var i = 0;i<sousEch;i++){
-							outputData[sample]=outputData[sample]+inputData[sample*sousEch+i]/sousEch;
+						for(var i = 0;i<resamplingRate;i++){
+							outputData[sample]=outputData[sample]+inputData[sample*resamplingRate+i]/resamplingRate;
 						}
 
 					}
@@ -74,7 +74,7 @@ if (navigator.getUserMedia) {
 			function draw() {
 				drawVisual = requestAnimationFrame(draw);
 				analyser.getFloatFrequencyData(dataArray);
-				var frequency = (max_index(dataArray)*audioCtx.sampleRate/(analyser.fftSize*sousEch));
+				var frequency = (max_index(dataArray)*audioCtx.sampleRate/(analyser.fftSize*resamplingRate));
 				var closestNote = tuning.findClosestNote(frequency);
 
 				detectedFrequencyTxt.innerHTML = frequency.toFixed(1)+" Hz";
