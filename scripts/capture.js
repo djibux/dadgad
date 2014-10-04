@@ -1,25 +1,6 @@
-function max_index(elements) {
-	var i = 1;
-	var mi = 0;
-	while (i < elements.length) {
-		if (!(elements[i] < elements[mi]))
-			mi = i;
-		i += 1;
-	}
-	return mi;
-}
-function sum(elements){
-	var sum = 0.0;
-	for (var i = 0;i<elements.length;i++){
-		sum += elements[i];
-	}
-	return sum;
-}
-
-var Capture = function (tuning) {
+var Capture = function () {
 	this.audioCtx = null;
 	this.analyser = null;
-	this.tuning = tuning;
 	this.startCapturing();
 }
 
@@ -96,14 +77,13 @@ Capture.prototype = {
 		var dataArray = new Float32Array(this.analyser.frequencyBinCount);
 		this.analyser.getFloatFrequencyData(dataArray);
 
-		if ( sum(dataArray) >= -100000.0 ) {
-			var detectedFrequency = (max_index(dataArray)*this.audioCtx.sampleRate/(this.analyser.fftSize*Capture.RESAMPLING_RATE));
-			var closestNote = this.tuning.findClosestNote(detectedFrequency);
-			var noteFoundEvent = new CustomEvent("notefound", {"detail":closestNote});
-			window.dispatchEvent(noteFoundEvent);
+		if ( ArrayTools.sum(dataArray) >= -100000.0 ) {
+			var detectedFrequency = (ArrayTools.maxIndex(dataArray)*this.audioCtx.sampleRate/(this.analyser.fftSize*Capture.RESAMPLING_RATE));
+			var soundOn = new CustomEvent("soundon", {"detail":detectedFrequency});
+			window.dispatchEvent(soundOn);
 		} else {
-			var noteLostEvent = new CustomEvent("notefound");
-			window.dispatchEvent(noteLostEvent);
+			var soundOff = new CustomEvent("soundoff");
+			window.dispatchEvent(soundOff);
 		}
 
 

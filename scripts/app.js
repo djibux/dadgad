@@ -10,7 +10,6 @@ App.prototype = {
 		for ( var button of document.querySelectorAll("button") ) {
 			button.addEventListener("click", function(e) {
 				document.querySelector("h1").innerHTML = e.target.value + " tuner";
-				console.log(this);
 				this.tuning = new Tuning(e.target.value);
 			}.bind(this))
 		}
@@ -19,8 +18,8 @@ App.prototype = {
 	},
 
 	setupNoteDetection: function() {
-		window.addEventListener("notefound", this._drawNote);
-		window.addEventListener("notelost", this._drawNote);
+		window.addEventListener("soundon", this._drawNote.bind(this));
+		window.addEventListener("soundoff", this._drawNote.bind(this));
 	},
 
 	_drawNote: function(recievedEvent) {
@@ -29,13 +28,15 @@ App.prototype = {
 		var closestNoteTxt = document.getElementById('closest-note');
 		var lowNoteIndicatorTxt = document.getElementById('low-note-indicator');
 		var highNoteIndicatorTxt = document.getElementById('high-note-indicator');
-		var detectedNote = recievedEvent.detail;
 
-		if ( detectedNote ) {
-			detectedFrequencyTxt.innerHTML = detectedNote.detectedFrequency.toFixed(1)+" Hz";
+		var detectedFrequency = recievedEvent.detail;
+
+		if ( detectedFrequency ) {
+			detectedNote = this.tuning.findClosestNote(detectedFrequency);
+			detectedFrequencyTxt.innerHTML = detectedFrequency.toFixed(1)+" Hz";
 			gapTxt.innerHTML = detectedNote.frequencyGap.toFixed(2)+ "Hz";
 			closestNoteTxt.innerHTML = detectedNote.note.noteName;
-			if ( Math.abs(detectedNote.frequencyGap) < detectedNote.detectedFrequency/100 ) {
+			if ( Math.abs(detectedNote.frequencyGap) < detectedFrequency/100 ) {
 				lowNoteIndicatorTxt.innerHTML = ">";
 				highNoteIndicatorTxt.innerHTML = "<";
 			} else if ( detectedNote.frequencyGap > 0 ) {
