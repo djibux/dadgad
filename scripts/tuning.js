@@ -12,10 +12,10 @@ Tuning.prototype = {
 		return this.notes.reduce ( function( previousResult, currentNote ) {
 			var currentFrequencyGap = currentNote.processFrequencyGap(detectedFrequency);
 			if ( Math.abs(currentFrequencyGap) <= Math.abs(previousResult.frequencyGap) ) {
-				return { "note": currentNote, "frequencyGap": currentFrequencyGap };
+				return { "note": currentNote, "frequencyGap": currentFrequencyGap, "detectedFrequency": detectedFrequency };
 			} else {
 				return previousResult;
 			}
-		}, { "note": null, "frequencyGap": Infinity })
+		}, { "note": null, "frequencyGap": Infinity, "detectedFrequency": detectedFrequency })
 	}
 }

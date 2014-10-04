@@ -16,7 +16,10 @@ function sum(elements){
 	return sum;
 }
 
-var Capture = function () {
+var Capture = function (tuning) {
+	this.audioCtx = null;
+	this.analyser = null;
+	this.tuning = tuning;
 	this.startCapturing();
 }
 
@@ -43,62 +46,26 @@ Capture.prototype = {
 	},
 
 	_onSuccessfulCapture: function(localMediaStream) {
-		var audioCtx = new AudioContext();
-		var source = audioCtx.createMediaStreamSource(localMediaStream);
-		var node = audioCtx.createScriptProcessor(Capture.BUFFER_SIZE, 1, 1);
-		var analyser = audioCtx.createAnalyser();
+		this.audioCtx = new AudioContext();
+		var source = this.audioCtx.createMediaStreamSource(localMediaStream);
+		var node = this.audioCtx.createScriptProcessor(Capture.BUFFER_SIZE, 1, 1);
+		this.analyser = this.audioCtx.createAnalyser();
 
 		window.horrible_hack_for_mozilla = source;
 
-		// Connection des nodes : microphone -> ScriptProcessorNode (resampling) -> AnalyserNode (fft)
+		// Connecting nodes: microphone -> ScriptProcessorNode (resampling) -> AnalyserNode (FFT)
 		source.connect(node);
-		node.connect(analyser);
+		node.connect(this.analyser);
 
 		// Give the node a function to process audio events
 		node.onaudioprocess = this._processAudio;
+		
+		// Configure FFT
+		this.analyser.fftSize = 2048;
+		this.analyser.smoothingTimeConstant = 0.9;
 
-
-		analyser.fftSize = 2048;
-		analyser.smoothingTimeConstant = 0.9;
-		var bufferLength = analyser.frequencyBinCount;
-		var dataArray = new Float32Array(bufferLength);
-
-		var detectedFrequencyTxt = document.getElementById('detected-frequency');
-		var gapTxt = document.getElementById('gap');
-		var closestNoteTxt = document.getElementById('closest-note');
-		var lowNoteIndicatorTxt = document.getElementById('low-note-indicator');
-		var highNoteIndicatorTxt = document.getElementById('high-note-indicator');
-
-		function draw() {
-			drawVisual = requestAnimationFrame(draw);
-			analyser.getFloatFrequencyData(dataArray);
-			//console.log(sum(dataArray));
-			if(sum(dataArray)>=-100000.0){
-				var frequency = (max_index(dataArray)*audioCtx.sampleRate/(analyser.fftSize*Capture.RESAMPLING_RATE));
-				var closestNote = tuning.findClosestNote(frequency);
-
-				detectedFrequencyTxt.innerHTML = frequency.toFixed(1)+" Hz";
-				gapTxt.innerHTML = closestNote.frequencyGap.toFixed(2)+ "Hz";
-				closestNoteTxt.innerHTML = closestNote.note.noteName;
-				if ( Math.abs(closestNote.frequencyGap) < frequency/100 ) {
-					lowNoteIndicatorTxt.innerHTML = ">";
-					highNoteIndicatorTxt.innerHTML = "<";
-				} else if ( closestNote.frequencyGap > 0 ) {
-					lowNoteIndicatorTxt.innerHTML = ">";
-					highNoteIndicatorTxt.innerHTML = "";
-				} else {
-					lowNoteIndicatorTxt.innerHTML = "";
-					highNoteIndicatorTxt.innerHTML = "<";
-				}
-			}else{
-				detectedFrequencyTxt.innerHTML = "";
-				gapTxt.innerHTML = "";
-				closestNoteTxt.innerHTML = "";
-				lowNoteIndicatorTxt.innerHTML = "";
-				highNoteIndicatorTxt.innerHTML = "";
-			}
-		};
-		draw();
+		// Start analysing
+		this._analyseAudio();
 	},
 
 	_processAudio: function(audioProcessingEvent) {
@@ -114,15 +81,33 @@ Capture.prototype = {
 			var outputData = outputBuffer.getChannelData(channel);
 
 			// Loop through the 4096 samples
-
 			for (var sample = 0; sample < inputBuffer.length/Capture.RESAMPLING_RATE; sample++) {
 				// make output equal to the mean of the input
 				outputData[sample] = 0;
-				for(var i = 0;i<Capture.RESAMPLING_RATE;i++){
+				for (var i = 0; i<Capture.RESAMPLING_RATE; i++ ){
 					outputData[sample]=outputData[sample]+inputData[sample*Capture.RESAMPLING_RATE+i]/Capture.RESAMPLING_RATE;
 				}
 
 			}
 		}
+	},
+
+	_analyseAudio() {
+		var dataArray = new Float32Array(this.analyser.frequencyBinCount);
+		this.analyser.getFloatFrequencyData(dataArray);
+
+		if ( sum(dataArray) >= -100000.0 ) {
+			var detectedFrequency = (max_index(dataArray)*this.audioCtx.sampleRate/(this.analyser.fftSize*Capture.RESAMPLING_RATE));
+			var closestNote = this.tuning.findClosestNote(detectedFrequency);
+			var noteFoundEvent = new CustomEvent("notefound", {"detail":closestNote});
+			window.dispatchEvent(noteFoundEvent);
+		} else {
+			var noteLostEvent = new CustomEvent("notefound");
+			window.dispatchEvent(noteLostEvent);
+		}
+
+
+		// Setting up the next call (when screen is ready to update)
+		window.requestAnimationFrame(this._analyseAudio.bind(this));
 	}
 }
