@@ -15,9 +15,9 @@ if (navigator.getUserMedia) {
 		},
 		// successCallback
 		function(localMediaStream) {
-			var magnitude;
+			//var magnitude;
 			var bufferSize = 4096;
-			var rate;
+			//var rate;
 			var resamplingRate = 64;
 
 			var audioCtx = new AudioContext();
@@ -74,21 +74,30 @@ if (navigator.getUserMedia) {
 			function draw() {
 				drawVisual = requestAnimationFrame(draw);
 				analyser.getFloatFrequencyData(dataArray);
-				var frequency = (max_index(dataArray)*audioCtx.sampleRate/(analyser.fftSize*resamplingRate));
-				var closestNote = tuning.findClosestNote(frequency);
+				//console.log(sum(dataArray));
+				if(sum(dataArray)>=-100000.0){
+					var frequency = (max_index(dataArray)*audioCtx.sampleRate/(analyser.fftSize*resamplingRate));
+					var closestNote = tuning.findClosestNote(frequency);
 
-				detectedFrequencyTxt.innerHTML = frequency.toFixed(1)+" Hz";
-				gapTxt.innerHTML = closestNote.frequencyGap.toFixed(2)+ "Hz";
-				closestNoteTxt.innerHTML = closestNote.note.noteName;
-				if ( Math.abs(closestNote.frequencyGap) < frequency/100 ) {
-					lowNoteIndicatorTxt.innerHTML = ">";
-					highNoteIndicatorTxt.innerHTML = "<";
-				} else if ( closestNote.frequencyGap > 0 ) {
-					lowNoteIndicatorTxt.innerHTML = ">";
-					highNoteIndicatorTxt.innerHTML = "";
-				} else {
+					detectedFrequencyTxt.innerHTML = frequency.toFixed(1)+" Hz";
+					gapTxt.innerHTML = closestNote.frequencyGap.toFixed(2)+ "Hz";
+					closestNoteTxt.innerHTML = closestNote.note.noteName;
+					if ( Math.abs(closestNote.frequencyGap) < frequency/100 ) {
+						lowNoteIndicatorTxt.innerHTML = ">";
+						highNoteIndicatorTxt.innerHTML = "<";
+					} else if ( closestNote.frequencyGap > 0 ) {
+						lowNoteIndicatorTxt.innerHTML = ">";
+						highNoteIndicatorTxt.innerHTML = "";
+					} else {
+						lowNoteIndicatorTxt.innerHTML = "";
+						highNoteIndicatorTxt.innerHTML = "<";
+					}
+				}else{
+					detectedFrequencyTxt.innerHTML = "";
+					gapTxt.innerHTML = "";
+					closestNoteTxt.innerHTML = "";
 					lowNoteIndicatorTxt.innerHTML = "";
-					highNoteIndicatorTxt.innerHTML = "<";
+					highNoteIndicatorTxt.innerHTML = "";
 				}
 			};
 			draw();
@@ -111,4 +120,12 @@ function max_index(elements) {
 		i += 1;
 	}
 	return mi;
+}
+
+function sum(elements){
+	var sum = 0.0;
+	for (var i = 0;i<elements.length;i++){
+		sum += elements[i];
+	}
+	return sum;
 }
