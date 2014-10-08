@@ -73,7 +73,7 @@ Capture.prototype = {
 		}
 	},
 
-	_analyseAudio() {
+	_analyseAudio: function() {
 		var dataArray = new Float32Array(this.analyser.frequencyBinCount);
 		this.analyser.getFloatFrequencyData(dataArray);
 
