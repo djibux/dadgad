@@ -6,6 +6,8 @@ var Capture = function () {
 
 Object.defineProperty(Capture, "BUFFER_SIZE", {value: 4096});
 Object.defineProperty(Capture, "RESAMPLING_RATE", {value: 64});
+Object.defineProperty(Capture,"START_VOLUME_THRESHOLD", {value: -110000});
+Object.defineProperty(Capture,"STOP_VOLUME_THRESHOLD", {value: -127000});
 
 Capture.prototype = {
 	startCapturing: function() {
@@ -76,12 +78,13 @@ Capture.prototype = {
 	_analyseAudio: function() {
 		var dataArray = new Float32Array(this.analyser.frequencyBinCount);
 		this.analyser.getFloatFrequencyData(dataArray);
-
-		if ( ArrayTools.sum(dataArray) >= -100000.0 ) {
+		var volume = ArrayTools.sum(dataArray);
+		console.log(volume)
+		if ( volume >= Capture.START_VOLUME_THRESHOLD ) {
 			var detectedFrequency = (ArrayTools.maxIndex(dataArray)*this.audioCtx.sampleRate/(this.analyser.fftSize*Capture.RESAMPLING_RATE));
 			var soundOn = new CustomEvent("soundon", {"detail":detectedFrequency});
 			window.dispatchEvent(soundOn);
-		} else {
+		} else if(volume <= -Capture.STOP_VOLUME_THRESHOLD){
 			var soundOff = new CustomEvent("soundoff");
 			window.dispatchEvent(soundOff);
 		}
