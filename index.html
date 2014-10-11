@@ -1,26 +1,52 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>DAGDAD : simple tuner for Firefox OS</title>
+		<title>DAGDAD : simple guitar tuner for Firefox OS</title>
 		<meta name="viewport" content="width=device-width, user-scalable=no">
 		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="style/building-blocks/util.css">
+		<link rel="stylesheet" type="text/css" href="style/building-blocks/headers.css">
+		<link rel="stylesheet" type="text/css" href="style/building-blocks/drawer.css">
+		<link rel="stylesheet" type="text/css" href="style/building-blocks/layout.css">
 		<link rel="stylesheet" type="text/css" href="style/style.css">
 	</head>
 	<body>
-		<h1></h1>
-		<div id="tuner">
-			<p id="low-note-indicator">&lt;&lt;&lt;</p>
-			<p id="closest-note"></p>
-			<p id="high-note-indicator">&gt;&gt;&gt;</p>
-		</div>
-		<p>
-			Detected frequency: <span id="detected-frequency"></span>
-			<br />
-			Gap to closest note: <span id="gap"></span>
-		</p>
-		<h1>Choose tuning</h1>
-		<button value="standard">Guitar (standard)</button>
-		<button value="chromatic">Chromatic</button>
+		<section data-type="sidebar">
+			<header>
+				<menu type="toolbar">
+					<a href="#content">Done</a>
+				</menu>
+				<h1>Tuner settings</h1>
+			</header>
+			<nav>
+				<h2>Tuner Type</h2>
+				<ul id="set-tuner-type">
+					<li><a href="#content" id="set-standard-tuning">Standard (EADGBE)</a></li>
+					<li><a href="#content" id="set-chromatic-tuning">Chromatic</a></li>
+				</ul>
+			</nav>
+		</section>
+		<section id="drawer" role="region" class="vbox fit">
+			<header>
+				<a href="#content"><span class="icon icon-menu">hide sidebar</span></a>
+				<a href="#drawer"><span class="icon icon-menu">show sidebar</span></a>
+				<h1 id="app-title">Tuner</h1>
+			</header>
+			<section class="gaia-list fit scroll sticky">
+				<div role="main" id="tuner">
+					<p id="low-note-indicator"></p>
+					<p id="closest-note">-</p>
+					<p id="high-note-indicator"></p>
+				</div>
+			</section>
+			<footer class="gaia-footer">
+				<p>
+					Detected frequency: <span id="detected-frequency"></span>
+					<br />
+					Gap to closest note: <span id="gap"></span>
+				</p>
+			</footer>
+		</section>
 		<script src="scripts/notes.js"></script>
 		<script src="scripts/tuning.js"></script>
 		<script src="scripts/array_tools.js"></script>

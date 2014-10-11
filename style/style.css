@@ -1,29 +1,15 @@
-/* || basic set up + sizing for containers */
-
-html, body {
-  margin: 0;
-}
-
-html {
-  width: 100%;
-  height: 100%;
-  font-size: 10px;
-  font-family: 'Pathway Gothic One', sans-serif;
-  background-color: white;
-}
-
-body {
-  width: 100%;
-  height: inherit;
+footer.gaia-footer p {
+	text-align:left;
 }
 
 #tuner {
 	display: table;
 	margin: auto;
 	width: auto;
+	height: 100%;
 }
 	#tuner>p {
-		font-size: 20vw;
+		font-size: 40vmin;
 		display: table-cell;
 		text-align: right;
 		vertical-align: middle;
@@ -35,7 +21,3 @@ body {
 	#tuner>p+p+p {
 		text-align: left;
 	}
-
-button {
-	font-size: 5vw;
-}

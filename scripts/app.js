@@ -1,20 +1,22 @@
 var App = function() {
 	this.tuning = new Tuning("standard"); 
 	this.capture = new Capture(this.tuning);
-	this.setupTuningButtons();
+	this.setupChangeTuningActions();
 	this.setupNoteDetection();
 }
 
 App.prototype = {
-	setupTuningButtons: function() {
-		for ( var button of document.querySelectorAll("button") ) {
-			button.addEventListener("click", function(e) {
-				document.querySelector("h1").innerHTML = e.target.value + " tuner";
-				this.tuning = new Tuning(e.target.value);
+	setupChangeTuningActions: function() {
+		var selector = "#set-tuner-type a"; 
+		for ( var actionElement of document.querySelectorAll(selector) ) {
+			actionElement.addEventListener("click", function(e) {
+				var tuning = e.target.id.replace(/set-(.)(.*)-tuning/, function(match,p1,p2){ return p1.toUpperCase()+p2 });
+				document.querySelector("#drawer h1").innerHTML = tuning + " tuner";
+				this.tuning = new Tuning(tuning.toLowerCase());
 			}.bind(this))
 		}
-		var chooseStandardTuning = new CustomEvent("click");
-		document.querySelector("button").dispatchEvent(chooseStandardTuning);
+		var chooseStandardTuningEvent = new CustomEvent("click");
+		document.querySelector(selector).dispatchEvent(chooseStandardTuningEvent);
 	},
 
 	setupNoteDetection: function() {
@@ -49,7 +51,7 @@ App.prototype = {
 		} else {
 			detectedFrequencyTxt.innerHTML = "";
 			gapTxt.innerHTML = "";
-			closestNoteTxt.innerHTML = "?";
+			closestNoteTxt.innerHTML = "-";
 			lowNoteIndicatorTxt.innerHTML = "";
 			highNoteIndicatorTxt.innerHTML = "";
 		}
