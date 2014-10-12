@@ -45,7 +45,7 @@ Capture.prototype = {
 		
 		// Configure FFT
 		this.analyser.fftSize = 2048;
-		this.analyser.smoothingTimeConstant = 0.9;
+		this.analyser.smoothingTimeConstant = 0.97;
 
 		// Start analysing
 		this._analyseAudio();
@@ -79,7 +79,7 @@ Capture.prototype = {
 		var dataArray = new Float32Array(this.analyser.frequencyBinCount);
 		this.analyser.getFloatFrequencyData(dataArray);
 		var volume = ArrayTools.sum(dataArray);
-		console.log(volume)
+		
 		if ( volume >= Capture.START_VOLUME_THRESHOLD ) {
 			var detectedFrequency = (ArrayTools.maxIndex(dataArray)*this.audioCtx.sampleRate/(this.analyser.fftSize*Capture.RESAMPLING_RATE));
 			var soundOn = new CustomEvent("soundon", {"detail":detectedFrequency});
