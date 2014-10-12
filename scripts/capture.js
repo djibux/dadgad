@@ -79,7 +79,6 @@ Capture.prototype = {
 		var dataArray = new Float32Array(this.analyser.frequencyBinCount);
 		this.analyser.getFloatFrequencyData(dataArray);
 		var volume = ArrayTools.sum(dataArray);
-		console.log(volume)
 		if ( volume >= Capture.START_VOLUME_THRESHOLD ) {
 			var detectedFrequency = (ArrayTools.maxIndex(dataArray)*this.audioCtx.sampleRate/(this.analyser.fftSize*Capture.RESAMPLING_RATE));
 			var soundOn = new CustomEvent("soundon", {"detail":detectedFrequency});
