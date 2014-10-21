@@ -13,7 +13,7 @@ App.prototype = {
 		for (var tuningId in availableTunings) {
 			var tuningName = tuningId.replace("-"," ");
 			if ( availableTunings[tuningId].length <= 6 ) {
-				tuningName += "("+availableTunings[tuningId].join("-")+")"
+				tuningName += " ("+availableTunings[tuningId].join("-")+")"
 			}
 			tuningList.innerHTML += '<li><a href="#content" id="set-'+tuningId+'-tuning">'+tuningName+'</a></li>'								
 		}
