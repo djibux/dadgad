@@ -1,18 +1,31 @@
 var App = function() {
-	this.tuning = new Tuning("standard"); 
+	this.tuning = new Tuning("Standard"); 
 	this.capture = new Capture(this.tuning);
+	this.addTuningSelectors();
 	this.setupChangeTuningActions();
 	this.setupNoteDetection();
 }
 
 App.prototype = {
+	addTuningSelectors: function() {
+		var tuningList = document.getElementById("set-tuner-type");
+		var availableTunings = this.tuning.getAvailableTunings();
+		for (var tuningId in availableTunings) {
+			var tuningName = tuningId.replace("-"," ");
+			if ( availableTunings[tuningId].length <= 6 ) {
+				tuningName += "("+availableTunings[tuningId].join("-")+")"
+			}
+			tuningList.innerHTML += '<li><a href="#content" id="set-'+tuningId+'-tuning">'+tuningName+'</a></li>'								
+		}
+	},				
+
 	setupChangeTuningActions: function() {
-		var selector = "#set-tuner-type a"; 
+		var selector = "#set-tuner-type a";
 		for ( var actionElement of document.querySelectorAll(selector) ) {
 			actionElement.addEventListener("click", function(e) {
-				var tuning = e.target.id.replace(/set-(.)(.*)-tuning/, function(match,p1,p2){ return p1.toUpperCase()+p2 });
-				document.querySelector("#drawer h1").innerHTML = tuning + " tuner";
-				this.tuning = new Tuning(tuning.toLowerCase());
+				var tuning = e.target.id.replace(/set-(.*)-tuning/, function(match,p1){ return p1 });
+				document.querySelector("#drawer h1").innerHTML = e.target.innerHTML;
+				this.tuning = new Tuning(tuning);
 			}.bind(this))
 		}
 		var chooseStandardTuningEvent = new CustomEvent("click");
