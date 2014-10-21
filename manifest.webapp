@@ -1,6 +1,7 @@
 {
+  "version": "1.0",
   "name": "DADGAD",
-  "description": "A simple guitar tuner for Firefox OS.  It is optimized for guitars (meaning that it might not work with instruments with a lower or higher pitch).<br /><br />DADGAD is free and distributed under a GPLv3 licence.  Feel free to contribute or to send us feedback.",
+  "description": "A guitar tuner for Firefox OS.",
   "launch_path": "/index.html",
   "icons": {
     "60": "/images/icon-60.png",
@@ -8,8 +9,15 @@
     "512": "/images/icon-512.png"
   },
   "developer": {
-    "name": "Olivier Marceau and djib",
-    "url": "null"
+    "name": "Olivier and djib",
+    "url": "http://minjaw.com/"
+  },
+  "default_locale": "en",
+  "locales": {
+    "fr": {
+      "name": "DADGAD",
+      "description": "Un accordeur guitare sur Firefox OS."
+    }
   },
   "permissions": {
     "audio-capture": {
