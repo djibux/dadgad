@@ -17,7 +17,11 @@ Preview
 -------
 You can [try it online](http://djibux.github.io/dadgad/).
 
-!["Preview"](/images/screenshots/detecting-note.png?raw=true "Preview")
+| Tuner in action  | Many tunings are built-in | 
+|------------------|---------------------------|
+| !["Preview"](/images/screenshots/detecting-note.png?raw=true "Preview" =100x) | !["Many tunings are built-in"](/images/screenshots/available-tunings.png?raw=true "Many tunings are built-in") |
 
-!["Many tunings are built-in"](/images/screenshots/available-tunings.png?raw=true "Many tunings are built-in")
+| Chromatic tuner |
+|-----------------|
+| !["Chromatic tuner"](/images/screenshots/chromatic-tuner.png?raw=true "Chromatic Tuner") |
 
