@@ -32,23 +32,34 @@ Capture.prototype = {
 		this.audioCtx = new AudioContext();
 		var source = this.audioCtx.createMediaStreamSource(localMediaStream);
 		var node = this.audioCtx.createScriptProcessor(Capture.BUFFER_SIZE, 1, 1);
+		var node2 = this.audioCtx.createScriptProcessor(Capture.BUFFER_SIZE, 1, 1);
 		this.analyser = this.audioCtx.createAnalyser();
+		this.analyser2 = this.audioCtx.createAnalyser();
 
 		window.horrible_hack_for_mozilla = source;
 
 		// Connecting nodes: microphone -> ScriptProcessorNode (resampling) -> AnalyserNode (FFT)
 		source.connect(node);
 		node.connect(this.analyser);
+		
+		source.connect(node2);
+		node2.connect(this.analyser2);
 
 		// Give the node a function to process audio events
 		node.onaudioprocess = this._processAudio;
+		node2.onaudioprocess = this._processAudio2;
 		
 		// Configure FFT
 		this.analyser.fftSize = 2048;
-		this.analyser.smoothingTimeConstant = 0.9;
+		this.analyser.smoothingTimeConstant = 0.97;
 
 		// Start analysing
 		this._analyseAudio();
+		
+		// Configure FFT
+		this.analyser2.fftSize = 2048;
+		this.analyser2.smoothingTimeConstant = 0.97;
+
 	},
 
 	_processAudio: function(audioProcessingEvent) {
@@ -74,13 +85,43 @@ Capture.prototype = {
 			}
 		}
 	},
+	
+	_processAudio2: function(audioProcessingEvent) {
+		// The input buffer is the mic
+		var inputBuffer = audioProcessingEvent.inputBuffer;
+
+		// The output buffer contains the samples that will be modified and played
+		var outputBuffer = audioProcessingEvent.outputBuffer;
+		var resamplingRate = 2*Capture.RESAMPLING_RATE ;
+
+		// Loop through the output channels (in this case there is only one)
+		for (var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
+			var inputData = inputBuffer.getChannelData(channel);
+			var outputData = outputBuffer.getChannelData(channel);
+
+			// Loop through the 4096 samples
+			for (var sample = 0; sample < inputBuffer.length/resamplingRate; sample++) {
+				// make output equal to the mean of the input
+				outputData[sample] = 0;
+				for (var i = 0; i<resamplingRate; i++ ){
+					outputData[sample]=outputData[sample]+inputData[sample*resamplingRate+i]/Capture.resamplingRate;
+				}
+
+			}
+		}
+	},
 
 	_analyseAudio: function() {
 		var dataArray = new Float32Array(this.analyser.frequencyBinCount);
 		this.analyser.getFloatFrequencyData(dataArray);
 		var volume = ArrayTools.sum(dataArray);
+		
 		if ( volume >= Capture.START_VOLUME_THRESHOLD ) {
 			var detectedFrequency = (ArrayTools.maxIndex(dataArray)*this.audioCtx.sampleRate/(this.analyser.fftSize*Capture.RESAMPLING_RATE));
+			if (detectedFrequency<=this.audioCtx.sampleRate/2*Capture.RESAMPLING_RATE){
+				this._analyseAudio2();
+				return;
+			}
 			var soundOn = new CustomEvent("soundon", {"detail":detectedFrequency});
 			window.dispatchEvent(soundOn);
 		} else if(volume <= -Capture.STOP_VOLUME_THRESHOLD){
@@ -89,7 +130,28 @@ Capture.prototype = {
 		}
 
 
+
 		// Setting up the next call (when screen is ready to update)
 		window.requestAnimationFrame(this._analyseAudio.bind(this));
-	}
+	},
+	
+	_analyseAudio2: function() {
+		var dataArray = new Float32Array(this.analyser2.frequencyBinCount);
+		this.analyser2.getFloatFrequencyData(dataArray);
+		var volume = ArrayTools.sum(dataArray);
+		
+			if ( volume >= Capture.START_VOLUME_THRESHOLD ) {
+			var detectedFrequency = (ArrayTools.maxIndex(dataArray)*this.audioCtx.sampleRate/(this.analyser2.fftSize*2*Capture.RESAMPLING_RATE));
+			var soundOn = new CustomEvent("soundon", {"detail":detectedFrequency});
+			window.dispatchEvent(soundOn);
+		} else if(volume <= -Capture.STOP_VOLUME_THRESHOLD){
+			var soundOff = new CustomEvent("soundoff");
+			window.dispatchEvent(soundOff);
+		}
+
+
+
+		// Setting up the next call (when screen is ready to update)
+		window.requestAnimationFrame(this._analyseAudio.bind(this));
+	},
 }
