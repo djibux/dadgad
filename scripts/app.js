@@ -53,7 +53,7 @@ App.prototype = {
 			//drawVisual = requestAnimationFrame(draw);
 			var canva = document.getElementById('canva');
     			var canvaCtx = canva.getContext('2d');
-			canvaCtx.fillStyle = 'rgb(200, 200, 200)';
+			canvaCtx.fillStyle = 'rgb(255, 255, 255)';
 			canvaCtx.fillRect(0, 0, canva.width, canva.height);
 			var clockRadius = 50;
 

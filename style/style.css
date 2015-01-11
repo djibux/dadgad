@@ -6,7 +6,7 @@ footer.gaia-footer p {
 	display: table;
 	margin: auto;
 	width: auto;
-	height: 100%;
+	height: 50%;
 }
 	#tuner>p {
 		font-size: 40vmin;
@@ -21,6 +21,14 @@ footer.gaia-footer p {
 	#tuner>p+p+p {
 		text-align: left;
 	}
+#canva {
+	width: 100%;
+	height: 50%;
+	color: black;
+	background-color: white;
+	margin: auto;
+}
+
 .clocks {
     height: 450px;
     margin: 25px auto;
