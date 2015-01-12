@@ -45,7 +45,7 @@ Capture.prototype = {
 		
 		// Configure FFT
 		this.analyser.fftSize = 2048;
-		this.analyser.smoothingTimeConstant = 0.9;
+		this.analyser.smoothingTimeConstant = 0.97;
 
 		// Start analysing
 		this._analyseAudio();
