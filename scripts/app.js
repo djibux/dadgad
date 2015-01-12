@@ -55,18 +55,35 @@ App.prototype = {
     			var canvaCtx = canva.getContext('2d');
 			canvaCtx.fillStyle = 'rgb(255, 255, 255)';
 			canvaCtx.fillRect(0, 0, canva.width, canva.height);
-			var clockRadius = 50;
+			var clockRadius = canva.height;
 
 
     			//canvaCtx.translate(canva.width / 2, canva.height / 2);
     			//canvaCtx.beginPath();
 
-    			/*// draw numbers
-    			canvaCtx.font = '36px Sans-Serif';
+    			// draw numbers
+    			canvaCtx.font = '12px Sans-Serif';
     			canvaCtx.fillStyle = '#000';
     			canvaCtx.textAlign = 'center';
     			canvaCtx.textBaseline = 'middle';
-    			for (var n = 1; n < 13; n++) {
+    			theDeltaF = [-20.0,0.0,+20.0];
+    			for (var i=0;i<theDeltaF.length;i++){
+    				var deltaF = theDeltaF[i];
+					var theta = deltaF/100*Math.PI+Math.PI/2;
+					var x = clockRadius * 0.9 * Math.cos(theta);
+					var y = clockRadius * 0.9 * Math.sin(theta);
+					canvaCtx.fillText(-deltaF+" Hz", canva.width/2+x, canva.height-y);
+				}
+				for (var i=-20;i<=20;i=i+5){
+					var theta = i/100*Math.PI+Math.PI/2;
+					var x1 = clockRadius * 0.99 * Math.cos(theta);
+					var y1 = clockRadius * 0.99 * Math.sin(theta);
+					canvaCtx.beginPath();
+					canvaCtx.arc(canva.width/2+x1,canva.height-y1,canva.height/100,0,Math.PI * 2,true);
+					canvaCtx.closePath();
+					canvaCtx.stroke();
+				}
+    			/*for (var n = 1; n < 13; n++) {
         			var theta = (n - 3) * (Math.PI * 2) / 12;
         			var x = clockRadius * 0.7 * Math.cos(theta);
         			var y = clockRadius * 0.7 * Math.sin(theta);
@@ -91,8 +108,8 @@ App.prototype = {
 			//canvaCtx.rotate(theta);
 			canvaCtx.beginPath();
 			canvaCtx.moveTo(canva.width/2, canva.height);
-			var x = clockRadius * Math.cos(theta);
-			var y = clockRadius * Math.sin(theta);
+			var x = clockRadius *Math.cos(theta);
+			var y = clockRadius *Math.sin(theta);
 			console.log('x: '+x)
 			console.log('y: '+y)
 			canvaCtx.lineTo(canva.width/2+x, canva.height-y);
