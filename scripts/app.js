@@ -89,8 +89,8 @@ App.prototype = {
 				}
 				for (var i=-20;i<=20;i=i+5){
 					var theta = i/100*Math.PI+Math.PI/2;
-					var x1 = clockRadius * 0.99 * Math.cos(theta);
-					var y1 = clockRadius * 0.99 * Math.sin(theta);
+					var x1 = clockRadius * (1-2/100) * Math.cos(theta);
+					var y1 = clockRadius * (1-2/100) * Math.sin(theta);
 					canvaCtx.beginPath();
 					canvaCtx.arc(canva.width/2+x1,canva.height-y1,canva.height/100,0,Math.PI * 2,true);
 					canvaCtx.closePath();
