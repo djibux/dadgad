@@ -61,6 +61,74 @@ App.prototype = {
 				lowNoteIndicatorTxt.innerHTML = "";
 				highNoteIndicatorTxt.innerHTML = "<";
 			}
+			//function draw() {
+
+			//drawVisual = requestAnimationFrame(draw);
+			var canva = document.getElementById('canva');
+    			var canvaCtx = canva.getContext('2d');
+			canvaCtx.fillStyle = 'rgb(255, 255, 255)';
+			canvaCtx.fillRect(0, 0, canva.width, canva.height);
+			var clockRadius = canva.height;
+
+
+    			//canvaCtx.translate(canva.width / 2, canva.height / 2);
+    			//canvaCtx.beginPath();
+
+    			// draw numbers
+    			canvaCtx.font = '12px Sans-Serif';
+    			canvaCtx.fillStyle = '#000';
+    			canvaCtx.textAlign = 'center';
+    			canvaCtx.textBaseline = 'middle';
+    			theDeltaF = [-20.0,0.0,+20.0];
+    			for (var i=0;i<theDeltaF.length;i++){
+    				var deltaF = theDeltaF[i];
+					var theta = deltaF/100*Math.PI+Math.PI/2;
+					var x = clockRadius * 0.9 * Math.cos(theta);
+					var y = clockRadius * 0.9 * Math.sin(theta);
+					canvaCtx.fillText(-deltaF+" Hz", canva.width/2+x, canva.height-y);
+				}
+				for (var i=-20;i<=20;i=i+5){
+					var theta = i/100*Math.PI+Math.PI/2;
+					var x1 = clockRadius * (1-2/100) * Math.cos(theta);
+					var y1 = clockRadius * (1-2/100) * Math.sin(theta);
+					canvaCtx.beginPath();
+					canvaCtx.arc(canva.width/2+x1,canva.height-y1,canva.height/100,0,Math.PI * 2,true);
+					canvaCtx.closePath();
+					canvaCtx.stroke();
+				}
+    			/*for (var n = 1; n < 13; n++) {
+        			var theta = (n - 3) * (Math.PI * 2) / 12;
+        			var x = clockRadius * 0.7 * Math.cos(theta);
+        			var y = clockRadius * 0.7 * Math.sin(theta);
+        			canvaCtx.fillText(n, x, y);
+    			}*/
+
+    			//Draw the spots where the second hand stops
+    
+		    	/*for(var i=-15; i<=+15; i++){
+				var tTheta = (-i + 15) * (Math.PI * 2) / 60;
+				var x1 = clockRadius * 0.9 * Math.cos(tTheta);
+				var y1 = clockRadius * 0.9 * Math.sin(tTheta);
+		    
+				canvaCtx.beginPath();
+				canvaCtx.arc(x1,y1,1,0,Math.PI * 2,true);
+				canvaCtx.closePath();
+				canvaCtx.stroke();
+		    	} */
+    
+    			// draw hour
+    			var theta = (detectedNote.frequencyGap)/100*Math.PI+Math.PI/2;
+			//canvaCtx.rotate(theta);
+			canvaCtx.beginPath();
+			canvaCtx.moveTo(canva.width/2, canva.height);
+			var x = clockRadius *Math.cos(theta);
+			var y = clockRadius *Math.sin(theta);
+			console.log('x: '+x)
+			console.log('y: '+y)
+			canvaCtx.lineTo(canva.width/2+x, canva.height-y);
+			canvaCtx.stroke();
+			//}
+			//draw();
 		} else {
 			detectedFrequencyTxt.innerHTML = "";
 			gapTxt.innerHTML = "";
