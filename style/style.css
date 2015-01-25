@@ -42,19 +42,19 @@ footer.gaia-footer p {
 		margin: auto;
 		width: 50%;
 		height: 100%;
+		float: left;
 	}
 	#canva {
 		width: 50%;
-		height: 100%;
 		color: black;
 		background-color: white;
 		margin: auto;
+		position: absolute;
+		bottom: 0px;
+		max-height: 100%;
 	}
 }
 
-.clocks {
-    height: 450px;
-    margin: 25px auto;
-    position: relative;
-    width: 500px;
+#drawer>section {
+	position: relative;
 }
