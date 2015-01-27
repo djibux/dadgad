@@ -49,6 +49,7 @@ App.prototype = {
 		canvaCtx.clearRect(0, 0, canva.width, canva.height);
 		var clockRadius = canva.height;
 
+
 		// draw numbers
 		canvaCtx.font = '12px Sans-Serif';
 		canvaCtx.fillStyle = '#000';
